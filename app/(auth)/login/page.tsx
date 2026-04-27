@@ -1,0 +1,57 @@
+"use client";
+
+import Link from "next/link";
+import { LoginForm } from "@/components/forms/LoginForm";
+
+export default function LoginPage() {
+  const handleEmailLogin = async (data: {
+    email: string;
+    password: string;
+  }) => {
+    // TODO: Implement email/password login with Supabase
+    console.log("Login with:", data);
+  };
+
+  const handleOAuthLogin = async (provider: "google" | "apple") => {
+    // TODO: Implement OAuth login with Supabase
+    console.log("Login with:", provider);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            Welcome Back
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base mt-2">
+            Sign in to your account to continue
+          </p>
+        </div>
+
+        {/* Login Card */}
+        <LoginForm
+          onEmailLogin={handleEmailLogin}
+          onOAuthLogin={handleOAuthLogin}
+        />
+
+        {/* Sign Up Link */}
+        <div className="mt-6 text-center text-sm">
+          <span className="text-muted-foreground">Don't have an account? </span>
+          <Link
+            href="/register"
+            className="font-semibold text-primary hover:underline underline-offset-4"
+          >
+            Sign up
+          </Link>
+        </div>
+
+        {/* Footer Text */}
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          By signing in, you agree to our Terms of Service and Privacy Policy
+        </p>
+      </div>
+    </div>
+  );
+}

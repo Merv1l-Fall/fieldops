@@ -1,21 +1,13 @@
+
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Roboto } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { ClientProviders } from "@/components/ClientProviders";
 
-const robotoHeading = Roboto({subsets:['latin'],variable:'--font-heading'});
+const robotoHeading = Roboto({subsets:['latin'],variable:'--font-heading',weight:'700'});
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const robotoSans = Roboto({subsets:['latin'],variable:'--font-sans',weight:['400','500','700']});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,9 +22,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable, robotoHeading.variable)}
+      className={cn("dark", "h-full", "antialiased", "font-sans", robotoSans.variable, robotoHeading.variable)}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ClientProviders>{children}</ClientProviders>
+      </body>
     </html>
   );
 }

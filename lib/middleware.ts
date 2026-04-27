@@ -38,14 +38,21 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims()
   const user = data?.claims
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
+  // Public auth routes that don't require authentication
+  const authRoutes = ['/login', '/register', '/(auth)']
+  const isAuthRoute = authRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+
+  if (!user && !isAuthRoute) {
+    // No user and not on auth page, redirect to login
     const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  if (user && isAuthRoute) {
+    // User is logged in but trying to access auth pages, redirect to home
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
     return NextResponse.redirect(url)
   }
 
