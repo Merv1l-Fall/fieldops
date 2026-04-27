@@ -4,7 +4,7 @@ import { useUserStore } from "@/lib/store/userStore";
 
 /**
  * Hook to sync user from Supabase with Zustand store
- * Call this in your root layout or main app component
+ * Listens for real-time auth state changes
  */
 export function useSyncUser() {
   const { setUser, setIsLoading } = useUserStore();
@@ -12,7 +12,7 @@ export function useSyncUser() {
   useEffect(() => {
     async function getUser() {
       try {
-        const supabase = await createClient();
+        const supabase = createClient();
         const {
           data: { user },
         } = await supabase.auth.getUser();
@@ -21,8 +21,9 @@ export function useSyncUser() {
           setUser({
             id: user.id,
             email: user.email || "",
-            name: user.user_metadata?.name || user.email?.split("@")[0] || "",
+            full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "",
             avatar_url: user.user_metadata?.avatar_url,
+            created_at: user.created_at,
           });
         } else {
           setUser(null);
@@ -33,6 +34,30 @@ export function useSyncUser() {
       }
     }
 
+    // Get user on mount
     getUser();
+
+    // Listen for auth state changes
+    const supabase = createClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || "",
+          full_name: session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "",
+          avatar_url: session.user.user_metadata?.avatar_url,
+          created_at: session.user.created_at,
+        });
+      } else {
+        setUser(null);
+      }
+    });
+
+    // Cleanup subscription
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, [setUser, setIsLoading]);
 }

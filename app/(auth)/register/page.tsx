@@ -5,7 +5,7 @@ import { RegisterForm } from "@/components/forms/RegisterForm";
 
 export default function RegisterPage() {
   const handleEmailSignup = async (data: {
-    name: string;
+    full_name: string;
     email: string;
     password: string;
     confirmPassword: string;

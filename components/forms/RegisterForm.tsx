@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { createClient } from "@/lib/client";
+import { useUserStore } from "@/lib/store/userStore";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,10 +17,10 @@ import { Apple, Globe, Mail, Lock, User, Loader2 } from "lucide-react";
 // Validation Schema
 const registerSchema = z
   .object({
-    name: z
+    full_name: z
       .string()
-      .min(1, "Name is required")
-      .min(2, "Name must be at least 2 characters"),
+      .min(1, "Full name is required")
+      .min(2, "Full name must be at least 2 characters"),
     email: z.email("Invalid email address"),
     password: z
       .string()
@@ -44,6 +47,9 @@ export function RegisterForm({
   onEmailSignup,
 }: RegisterFormProps) {
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { setUser } = useUserStore();
   const {
     register,
     handleSubmit,
@@ -54,24 +60,69 @@ export function RegisterForm({
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
+      setError(null);
       if (onEmailSignup) {
         await onEmailSignup(data);
       } else {
-        console.log("Sign up with:", data);
+        // Default Supabase email signup
+        const supabase = createClient();
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            data: {
+              full_name: data.full_name,
+            },
+          },
+        });
+
+        if (authError) {
+          setError(authError.message);
+          return;
+        }
+
+        if (authData.user) {
+          setUser({
+            id: authData.user.id,
+            email: authData.user.email || "",
+            full_name: data.full_name,
+            created_at: authData.user.created_at,
+          });
+          // Redirect to home or email verification page
+          router.push("/");
+        }
       }
-    } catch (error) {
-      console.error("Sign up error:", error);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An error occurred";
+      setError(message);
+      console.error("Sign up error:", err);
     }
   };
 
   const handleOAuthClick = async (provider: "google" | "apple") => {
     setIsOAuthLoading(true);
     try {
+      setError(null);
       if (onOAuthSignup) {
         await onOAuthSignup(provider);
       } else {
-        console.log("Sign up with:", provider);
+        // Default Supabase OAuth signup
+        const supabase = createClient();
+        const { error: oauthError } = await supabase.auth.signInWithOAuth({
+          provider: provider as "google" | "apple",
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+
+        if (oauthError) {
+          setError(oauthError.message);
+        }
       }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "An error occurred";
+      setError(message);
+      console.error("OAuth error:", err);
     } finally {
       setIsOAuthLoading(false);
     }
@@ -82,22 +133,29 @@ export function RegisterForm({
   return (
     <Card className="p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        {/* Name Field */}
+        {/* Error Display */}
+        {error && (
+          <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+            {error}
+          </div>
+        )}
+
+        {/* Full Name Field */}
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="full_name">Full Name</Label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground size-4" />
             <Input
-              id="name"
+              id="full_name"
               type="text"
               placeholder="John Doe"
               disabled={isLoading}
-              className={`pl-10 py-5 ${errors.name ? "border-destructive" : ""}`}
-              {...register("name")}
+              className={`pl-10 py-5 ${errors.full_name ? "border-destructive" : ""}`}
+              {...register("full_name")}
             />
           </div>
-          {errors.name && (
-            <p className="text-xs text-destructive">{errors.name.message}</p>
+          {errors.full_name && (
+            <p className="text-xs text-destructive">{errors.full_name.message}</p>
           )}
         </div>
 
