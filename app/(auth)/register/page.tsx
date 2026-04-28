@@ -4,21 +4,6 @@ import Link from "next/link";
 import { RegisterForm } from "@/components/forms/RegisterForm";
 
 export default function RegisterPage() {
-  const handleEmailSignup = async (data: {
-    full_name: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
-    // TODO: Implement email/password signup with Supabase
-    console.log("Sign up with:", data);
-  };
-
-  const handleOAuthSignup = async (provider: "google" | "apple") => {
-    // TODO: Implement OAuth signup with Supabase
-    console.log("Sign up with:", provider);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
@@ -33,10 +18,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Register Card */}
-        <RegisterForm
-          onEmailSignup={handleEmailSignup}
-          onOAuthSignup={handleOAuthSignup}
-        />
+        <RegisterForm />
 
         {/* Sign In Link */}
         <div className="mt-6 text-center text-sm">

@@ -4,19 +4,6 @@ import Link from "next/link";
 import { LoginForm } from "@/components/forms/LoginForm";
 
 export default function LoginPage() {
-  const handleEmailLogin = async (data: {
-    email: string;
-    password: string;
-  }) => {
-    // TODO: Implement email/password login with Supabase
-    console.log("Login with:", data);
-  };
-
-  const handleOAuthLogin = async (provider: "google" | "apple") => {
-    // TODO: Implement OAuth login with Supabase
-    console.log("Login with:", provider);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
@@ -30,11 +17,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Login Card */}
-        <LoginForm
-          onEmailLogin={handleEmailLogin}
-          onOAuthLogin={handleOAuthLogin}
-        />
+        <LoginForm />
 
         {/* Sign Up Link */}
         <div className="mt-6 text-center text-sm">

@@ -71,7 +71,7 @@ export function LoginForm({ onOAuthLogin, onEmailLogin }: LoginFormProps) {
             avatar_url: authData.user.user_metadata?.avatar_url,
             created_at: authData.user.created_at,
           });
-          router.push("/");
+          router.push("/dashboard");
         }
       }
     } catch (err) {

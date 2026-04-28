@@ -25,7 +25,9 @@ export default function RootLayout({
       className={cn("dark", "h-full", "antialiased", "font-sans", robotoSans.variable, robotoHeading.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <ClientProviders>{children}</ClientProviders>
+        <ClientProviders>
+          {children}
+        </ClientProviders>
       </body>
     </html>
   );
