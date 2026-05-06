@@ -1,6 +1,6 @@
 "use client";
 
-export default function DashboardLayout({
+export default function PublicLayout({
   children,
 }: {
   children: React.ReactNode;

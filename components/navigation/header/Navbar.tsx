@@ -22,25 +22,29 @@ const Navbar = () => {
       <nav className="flex h-16 items-center justify-between" aria-label="Main navigation">
         {/* Left: Logo/Brand */}
         <div className="flex items-center">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/dashboard" className="flex items-center gap-2">
             <div className="text-xl font-bold text-primary">FieldOps</div>
           </Link>
         </div>
 
         {/* Center: Desktop Navigation Links */}
         <div className="hidden flex-1 items-center justify-center gap-8 md:flex">
+			{user && (
+				<>
+			  <Link
+				href="/dashboard"
+				className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+			  >
+				Dashboard
+			  </Link>
           <Link
-            href="/"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+		  href="/events"
+		  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
-            Home
+            Explore Games
           </Link>
-          <Link
-            href="/settings"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Settings
-          </Link>
+		  </>
+		)}
         </div>
 
         {/* Right: Desktop User Menu */}
@@ -51,7 +55,7 @@ const Navbar = () => {
                 <>
                   <div className="flex items-center gap-2">
                     <div className="flex flex-col items-end">
-                      <p className="text-sm font-medium text-foreground">{user.full_name}</p>
+                      <p className="text-sm font-medium text-foreground">{user.username ? user.username : user.full_name}</p>
                       <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
                   </div>

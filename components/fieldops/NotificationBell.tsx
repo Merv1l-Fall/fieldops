@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, getUserNotifications, getUnreadNotifications } from "@/app/actions";
+import { createClient } from "@/lib/client";
 import { Notification } from "@/lib/database.types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 interface NotificationBellProps {
   userId?: string;
@@ -19,11 +21,15 @@ export function NotificationBell({ userId }: NotificationBellProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const loadNotifications = async () => {
-      if (!userId) return;
+    if (!userId) return;
 
+    const supabase = createClient();
+    let subscription: ReturnType<typeof supabase.channel> | null = null;
+
+    const setupNotifications = async () => {
       setIsLoading(true);
       try {
+        // Load existing unread notifications
         const unread = await getUnreadNotifications(userId);
         setNotifications(unread);
         setUnreadCount(unread.length);
@@ -32,14 +38,34 @@ export function NotificationBell({ userId }: NotificationBellProps) {
       } finally {
         setIsLoading(false);
       }
+
+      // Subscribe to new notifications in real-time
+      subscription = supabase
+        .channel(`notifications:${userId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload: RealtimePostgresChangesPayload<Notification>) => {
+            const newNotification = payload.new as Notification;
+            setNotifications((prev) => [newNotification, ...prev]);
+            setUnreadCount((prev) => prev + 1);
+          }
+        )
+        .subscribe();
     };
 
-    loadNotifications();
+    setupNotifications();
 
-    // Polling interval - check every 30 seconds
-    const interval = setInterval(loadNotifications, 30000);
-
-    return () => clearInterval(interval);
+    return () => {
+      if (subscription) {
+        supabase.removeChannel(subscription);
+      }
+    };
   }, [userId]);
 
   if (!userId) return null;

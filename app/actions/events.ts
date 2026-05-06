@@ -90,7 +90,7 @@ export async function createEvent(
 
   const { data, error } = await supabase
     .from("events")
-    .insert([{ field_id: fieldId, ...eventData }])
+    .insert([{ ...eventData, field_id: fieldId }])
     .select(`*, field:fields(*)`)
     .single();
 

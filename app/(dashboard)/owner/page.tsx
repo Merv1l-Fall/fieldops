@@ -5,17 +5,17 @@ import { OwnerDashboard } from "./_components/OwnerDashboard";
 export default async function OwnerDashboardPage() {
   const result = await getCurrentUser();
 
-  if (!result.data) {
+  if (!result) {
     redirect("/login");
   }
 
   // If player, redirect to regular dashboard
-  if (result.data.profile?.role !== "owner") {
+  if (result.profile?.role !== "owner") {
     redirect("/dashboard");
   }
 
-  const fields = await getFieldsByOwner(result.data.id);
-  const events = await getEventsByOwner(result.data.id);
+  const fields = await getFieldsByOwner(result.id);
+  const events = await getEventsByOwner(result.id);
 
-  return <OwnerDashboard userId={result.data.id} fields={fields} events={events} />;
+  return <OwnerDashboard userId={result.id} fields={fields} events={events} />;
 }

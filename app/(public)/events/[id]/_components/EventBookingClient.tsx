@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createBooking, getCurrentUser } from "@/app/actions";
+import { createBooking, getCurrentUser, createStripeCheckoutAction } from "@/app/actions";
 import { EventWithField } from "@/lib/database.types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -30,7 +30,7 @@ export function EventBookingClient({
       // Get current user
       const userResult = await getCurrentUser();
 
-      if (!userResult.data) {
+      if (!userResult) {
         toast({
           title: "Login Required",
           description: "Please log in to book an event",
@@ -41,34 +41,49 @@ export function EventBookingClient({
       }
 
       // Create booking
-      const result = await createBooking(eventId, userResult.data.id);
+      const bookingResult = await createBooking(eventId, userResult.id);
 
-      if (result.error) {
+      if (bookingResult.error) {
         toast({
           title: "Booking Failed",
-          description: result.error,
+          description: bookingResult.error,
           variant: "destructive",
         });
+        setIsLoading(false);
         return;
       }
 
       // Handle payment if online
-      if (event.payment_mode === "online") {
-        // TODO: Redirect to Stripe checkout
-        toast({
-          title: "Booking Created",
-          description: "Proceeding to payment...",
-          variant: "default",
-        });
-        // For now, redirect to a success page
-        router.push(`/booking/success/${result.data?.id}`);
+      if (event.payment_mode === "online" && event.price_cents > 0) {
+        // Create Stripe checkout session
+        const checkoutResult = await createStripeCheckoutAction(
+          eventId,
+          bookingResult.data?.id || "",
+          userResult.id,
+          event.price_cents,
+          event.name
+        );
+
+        if (checkoutResult.error || !checkoutResult.data?.checkoutUrl) {
+          toast({
+            title: "Payment Setup Failed",
+            description: "Could not create checkout session. Please try again.",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        // Redirect to Stripe Checkout
+        window.location.href = checkoutResult.data.checkoutUrl;
       } else {
+        // Onsite payment - go directly to success
         toast({
           title: "Booking Confirmed!",
           description: `Your spot has been reserved. See you on ${new Date(event.date).toLocaleDateString("sv-SE")}!`,
           variant: "default",
         });
-        router.push(`/booking/success/${result.data?.id}`);
+        router.push(`/booking/success/${bookingResult.data?.id}`);
       }
     } catch (error) {
       toast({
@@ -77,7 +92,6 @@ export function EventBookingClient({
         variant: "destructive",
       });
       console.error(error);
-    } finally {
       setIsLoading(false);
     }
   };

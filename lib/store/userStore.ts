@@ -7,6 +7,7 @@ export interface User {
   avatar_url?: string | null;
   created_at?: string | null;
   role?: string | null;
+  username?: string | null;
 }
 
 interface UserStore {

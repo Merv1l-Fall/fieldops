@@ -17,7 +17,7 @@ export default async function BookingSuccessPage({ params }: BookingSuccessPageP
   }
 
   const eventDate = new Date(booking.event.date);
-  const isPaid = booking.payment_status === "paid";
+  const isPaid = booking.payment_status === "completed";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-100 flex items-center justify-center p-4">

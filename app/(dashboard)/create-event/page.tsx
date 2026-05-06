@@ -9,15 +9,15 @@ interface CreateEventPageProps {
 export default async function CreateEventPage({ searchParams }: CreateEventPageProps) {
   const result = await getCurrentUser();
 
-  if (!result.data) {
+  if (!result) {
     redirect("/login");
   }
 
-  if (result.data.profile?.role !== "owner") {
+  if (result.profile?.role !== "owner") {
     redirect("/dashboard");
   }
 
-  const fields = await getFieldsByOwner(result.data.id);
+  const fields = await getFieldsByOwner(result.id);
 
   if (fields.length === 0) {
     redirect("/create-field");
@@ -38,7 +38,7 @@ export default async function CreateEventPage({ searchParams }: CreateEventPageP
 
           <div className="bg-white rounded-lg shadow-lg p-8">
             <EventCreationForm
-              userId={result.data.id}
+              userId={result.id}
               fields={fields}
               defaultFieldId={fieldId}
             />

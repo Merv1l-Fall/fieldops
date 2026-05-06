@@ -5,11 +5,11 @@ import { FieldCreationForm } from "./_components/FieldCreationForm";
 export default async function CreateFieldPage() {
   const result = await getCurrentUser();
 
-  if (!result.data) {
+  if (!result) {
     redirect("/login");
   }
 
-  if (result.data.profile?.role !== "owner") {
+  if (result.profile?.role !== "owner") {
     redirect("/dashboard");
   }
 
@@ -25,7 +25,7 @@ export default async function CreateFieldPage() {
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <FieldCreationForm userId={result.data.id} />
+            <FieldCreationForm userId={result.id} />
           </div>
         </div>
       </div>

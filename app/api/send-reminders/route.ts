@@ -1,8 +1,6 @@
 import { createClient } from "@/lib/server";
 import { Resend } from "resend";
-import { EventReminderEmail } from "@/app/emails/EventReminder";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { getEventReminderEmailHTML } from "@/app/emails/EventReminder";
 
 export async function POST(request: Request) {
   // Verify this is from Vercel
@@ -10,6 +8,8 @@ export async function POST(request: Request) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return new Response("Unauthorized", { status: 401 });
   }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const supabase = await createClient();
@@ -44,8 +44,8 @@ export async function POST(request: Request) {
 
     // Send 7-day reminders
     for (const booking of bookings7d || []) {
-      const player = booking.player;
-      const event = booking.event;
+      const player = booking.player as any;
+      const event = booking.event as any;
 
       if (!player?.email) continue;
 
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
           from: "noreply@fieldops.app",
           to: player.email,
           subject: `Reminder: ${event.name} is in 7 days!`,
-          react: EventReminderEmail({
+          html: getEventReminderEmailHTML({
             playerName: player.full_name || "Player",
             eventName: event.name,
             fieldName: event.field.name,
@@ -113,8 +113,8 @@ export async function POST(request: Request) {
 
     // Send 1-day reminders
     for (const booking of bookings1d || []) {
-      const player = booking.player;
-      const event = booking.event;
+      const player = booking.player as any;
+      const event = booking.event as any;
 
       if (!player?.email) continue;
 
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
           from: "noreply@fieldops.app",
           to: player.email,
           subject: `Reminder: ${event.name} is tomorrow!`,
-          react: EventReminderEmail({
+          html: getEventReminderEmailHTML({
             playerName: player.full_name || "Player",
             eventName: event.name,
             fieldName: event.field.name,
