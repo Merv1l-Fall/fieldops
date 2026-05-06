@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FieldOps: Airsoft Event Management Platform
+
+FieldOps is a complete booking and management system for airsoft field operators and players.
+
+- **Field owners** create and manage events
+- **Players** browse events and book spots
+- **Automated** email reminders and payment processing
+- **Optional** waiver signing and Stripe integration
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- Supabase project
+- (Optional) Stripe account for online payments
+- (Optional) Resend account for emails
 
+### Setup
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Copy environment template:
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Fill in your environment variables:
+```
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_key
+# ... other variables
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+## Project Structure
+
+```
+app/
+├── (auth)/              # Login & signup pages
+├── (dashboard)/         # Dashboard & management pages
+│   ├── dashboard/       # Player dashboard
+│   ├── owner/          # Owner dashboard
+│   ├── create-field/   # Field creation flow
+│   └── create-event/   # Event creation form
+├── (public)/           # Public pages
+│   ├── events/[id]/    # Public event details & booking
+│   ├── sign/[id]/      # Waiver signing page
+│   └── booking/        # Booking confirmation
+├── api/
+│   ├── stripe/webhook/ # Stripe payment webhook
+│   └── send-reminders/ # Email reminder cron job
+└── actions/            # Server Actions
+```
+
+## Features
+
+### ✅ Implemented
+
+- **Authentication** - Email/password with Supabase Auth
+- **Field Management** - Create and manage airsoft fields
+- **Event Creation** - Set up events with pricing, capacity, date/time
+- **Event Booking** - Players can book spots with capacity checking
+- **Payment** - Optional Stripe integration for online payments
+- **Waivers** - Optional waiver signing on event arrival
+- **Email Reminders** - 7-day and 1-day automated reminders
+- **Favourites** - Players can favourite fields
+- **Notifications** - In-app notification system
+- **Owner Dashboard** - Manage events and bookings
+- **Public Pages** - Browse and book events
+
+## Configuration
+
+All features are configurable per event:
+- **Payment Mode**: Online (Stripe) or On-site
+- **Pricing**: Set custom prices per event
+- **Capacity**: Limit max players
+- **Waivers**: Require/skip waiver signing
+- **Reminders**: Enable/disable email reminders
+
+## Technology Stack
+
+- **Next.js 16** - React framework with App Router
+- **TypeScript** - Type safety
+- **Supabase** - PostgreSQL + Auth
+- **Tailwind CSS** - Styling
+- **shadcn/ui** - Component library
+- **Stripe** - Payment processing
+- **Resend** - Email service
+- **React Email** - Email templates
+
+## Deployment
+
+See [SETUP.md](./SETUP.md) for complete deployment guide.
+
+### Quick Deploy to Vercel
+
+1. Push code to GitHub
+2. Connect repo to Vercel
+3. Add environment variables
+4. Deploy
+
+The cron job for email reminders is configured in `vercel.json`.
+
+## API Routes
+
+### Public Routes
+- `POST /auth/callback` - Supabase OAuth callback
+
+### Protected Routes
+- `POST /api/send-reminders` - Email reminder cron (Vercel scheduled, requires CRON_SECRET)
+- `POST /api/stripe/webhook` - Stripe payment webhook
+
+## Environment Variables
+
+Required:
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+```
+
+Optional (for full functionality):
+```
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+RESEND_API_KEY
+CRON_SECRET
+NEXT_PUBLIC_APP_URL
+```
+
+See `.env.example` for template.
+
+## Database
+
+Uses Supabase PostgreSQL with tables:
+- `profiles` - User profiles with roles
+- `fields` - Airsoft fields/venues
+- `events` - Game day events
+- `bookings` - Player bookings
+- `waivers` - Event waivers
+- `notifications` - In-app notifications
+- `favourites` - Favourite fields
+
+All tables have Row Level Security (RLS) enforced.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Stripe Documentation](https://stripe.com/docs)
+- [shadcn/ui Components](https://ui.shadcn.com)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
