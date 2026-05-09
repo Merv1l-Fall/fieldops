@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createClient } from "@/lib/client";
 import { useUserStore } from "@/lib/store/userStore";
+import { AUTH_ROUTES, DEFAULT_REDIRECTS } from "@/lib/constants/routes";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -89,7 +90,7 @@ export function RegisterForm({
             created_at: authData.user.created_at,
           });
           // Redirect to home or email verification page
-          router.push("/");
+          router.push(DEFAULT_REDIRECTS.AFTER_REGISTER);
         }
       }
     } catch (err) {

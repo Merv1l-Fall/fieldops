@@ -1,16 +1,17 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/app/actions";
 import { FieldCreationForm } from "./_components/FieldCreationForm";
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/constants/routes";
 
 export default async function CreateFieldPage() {
   const result = await getCurrentUser();
 
   if (!result) {
-    redirect("/login");
+    redirect(AUTH_ROUTES.LOGIN);
   }
 
   if (result.profile?.role !== "owner") {
-    redirect("/dashboard");
+    redirect(DASHBOARD_ROUTES.HOME);
   }
 
   return (

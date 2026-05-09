@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser, getFieldsByOwner } from "@/app/actions";
 import { EventCreationForm } from "./_components/EventCreationForm";
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/constants/routes";
 
 interface CreateEventPageProps {
   searchParams: Promise<{ fieldId?: string }>;
@@ -10,17 +11,17 @@ export default async function CreateEventPage({ searchParams }: CreateEventPageP
   const result = await getCurrentUser();
 
   if (!result) {
-    redirect("/login");
+    redirect(AUTH_ROUTES.LOGIN);
   }
 
   if (result.profile?.role !== "owner") {
-    redirect("/dashboard");
+    redirect(DASHBOARD_ROUTES.HOME);
   }
 
   const fields = await getFieldsByOwner(result.id);
 
   if (fields.length === 0) {
-    redirect("/create-field");
+    redirect(DASHBOARD_ROUTES.CREATE_FIELD);
   }
 
   const { fieldId } = await searchParams;

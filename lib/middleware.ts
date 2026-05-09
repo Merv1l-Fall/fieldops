@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isAuthRoute, AUTH_ROUTES, DEFAULT_REDIRECTS } from '@/lib/constants/routes'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -38,21 +39,20 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims()
   const user = data?.claims
 
-  // Public auth routes that don't require authentication
-  const authRoutes = ['/login', '/register', '/(auth)']
-  const isAuthRoute = authRoutes.some(route => request.nextUrl.pathname.startsWith(route))
+  const currentRoute = request.nextUrl.pathname
+  const isOnAuthRoute = isAuthRoute(currentRoute)
 
-  if (!user && !isAuthRoute) {
+  if (!user && !isOnAuthRoute) {
     // No user and not on auth page, redirect to login
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = AUTH_ROUTES.LOGIN
     return NextResponse.redirect(url)
   }
 
-  if (user && isAuthRoute) {
+  if (user && isOnAuthRoute) {
     // User is logged in but trying to access auth pages, redirect to home
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = DEFAULT_REDIRECTS.HOME
     return NextResponse.redirect(url)
   }
 

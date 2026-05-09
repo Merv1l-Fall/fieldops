@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBooking, getCurrentUser, createStripeCheckoutAction } from "@/app/actions";
+import { AUTH_ROUTES, PUBLIC_ROUTES } from "@/lib/constants/routes";
 import { EventWithField } from "@/lib/database.types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -36,7 +37,7 @@ export function EventBookingClient({
           description: "Please log in to book an event",
           variant: "default",
         });
-        router.push(`/login?redirect=/events/${eventId}`);
+        router.push(`${AUTH_ROUTES.LOGIN}?redirect=${PUBLIC_ROUTES.EVENT_DETAIL(eventId)}`);
         return;
       }
 
@@ -83,7 +84,7 @@ export function EventBookingClient({
           description: `Your spot has been reserved. See you on ${new Date(event.date).toLocaleDateString("sv-SE")}!`,
           variant: "default",
         });
-        router.push(`/booking/success/${bookingResult.data?.id}`);
+        router.push(PUBLIC_ROUTES.BOOKING_SUCCESS(bookingResult.data?.id || ""));
       }
     } catch (error) {
       toast({

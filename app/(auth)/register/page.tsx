@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { RegisterForm } from "@/components/forms/RegisterForm";
+import { AUTH_ROUTES } from "@/lib/constants/routes";
 
 export default function RegisterPage() {
   return (
@@ -24,7 +25,7 @@ export default function RegisterPage() {
         <div className="mt-6 text-center text-sm">
           <span className="text-muted-foreground">Already have an account? </span>
           <Link
-            href="/login"
+            href={AUTH_ROUTES.LOGIN}
             className="font-semibold text-primary hover:underline underline-offset-4"
           >
             Sign in

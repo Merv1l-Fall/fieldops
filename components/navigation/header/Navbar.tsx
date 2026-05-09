@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/lib/store/userStore";
 import { useLogout } from "@/lib/hooks/useLogout";
 import MobileMenu from "./MobileMenu";
+import { AUTH_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/constants/routes";
 import { Menu, LogOut, Settings } from "lucide-react";
 
 const Navbar = () => {
@@ -22,7 +23,7 @@ const Navbar = () => {
       <nav className="flex h-16 items-center justify-between" aria-label="Main navigation">
         {/* Left: Logo/Brand */}
         <div className="flex items-center">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href={DASHBOARD_ROUTES.HOME} className="flex items-center gap-2">
             <div className="text-xl font-bold text-primary">FieldOps</div>
           </Link>
         </div>
@@ -32,13 +33,13 @@ const Navbar = () => {
 			{user && (
 				<>
 			  <Link
-				href="/dashboard"
+				href={DASHBOARD_ROUTES.HOME}
 				className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 			  >
 				Dashboard
 			  </Link>
           <Link
-		  href="/events"
+		  href={PUBLIC_ROUTES.EVENTS}
 		  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Explore Games
@@ -70,10 +71,10 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link href="/login">
+                  <Link href={AUTH_ROUTES.LOGIN}>
                     <Button variant="ghost">Sign In</Button>
                   </Link>
-                  <Link href="/register">
+                  <Link href={AUTH_ROUTES.REGISTER}>
                     <Button>Sign Up</Button>
                   </Link>
                 </>

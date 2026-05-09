@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/lib/store/userStore";
 import { useLogout } from "@/lib/hooks/useLogout";
+import { AUTH_ROUTES, DASHBOARD_ROUTES, PUBLIC_ROUTES, DEFAULT_REDIRECTS } from "@/lib/constants/routes";
 import { X, LogOut } from "lucide-react";
 
 interface MobileMenuProps {
@@ -81,7 +82,7 @@ const MobileMenu = ({ open, setOpen }: MobileMenuProps) => {
 
                 {/* Navigation Links */}
                 <nav className="space-y-2">
-                  <Link href="/" onClick={() => setOpen(false)}>
+                  <Link href={DASHBOARD_ROUTES.HOME} onClick={() => setOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
                       Home
                     </Button>
@@ -107,10 +108,10 @@ const MobileMenu = ({ open, setOpen }: MobileMenuProps) => {
               </div>
             ) : (
               <div className="space-y-2">
-                <Link href="/login" onClick={() => setOpen(false)}>
+                <Link href={AUTH_ROUTES.LOGIN} onClick={() => setOpen(false)}>
                   <Button className="w-full">Sign In</Button>
                 </Link>
-                <Link href="/register" onClick={() => setOpen(false)}>
+                <Link href={AUTH_ROUTES.REGISTER} onClick={() => setOpen(false)}>
                   <Button variant="outline" className="w-full">
                     Sign Up
                   </Button>

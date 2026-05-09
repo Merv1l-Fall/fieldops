@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createClient } from "@/lib/client";
 import { useUserStore } from "@/lib/store/userStore";
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/constants/routes";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -71,7 +72,7 @@ export function LoginForm({ onOAuthLogin, onEmailLogin }: LoginFormProps) {
             avatar_url: authData.user.user_metadata?.avatar_url,
             created_at: authData.user.created_at,
           });
-          router.push("/dashboard");
+          router.push(DASHBOARD_ROUTES.HOME);
         }
       }
     } catch (err) {

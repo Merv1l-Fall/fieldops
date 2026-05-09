@@ -1,17 +1,18 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser, getFieldsByOwner, getEventsByOwner } from "@/app/actions";
 import { OwnerDashboard } from "./_components/OwnerDashboard";
+import { AUTH_ROUTES, DASHBOARD_ROUTES } from "@/lib/constants/routes";
 
 export default async function OwnerDashboardPage() {
   const result = await getCurrentUser();
 
   if (!result) {
-    redirect("/login");
+    redirect(AUTH_ROUTES.LOGIN);
   }
 
   // If player, redirect to regular dashboard
   if (result.profile?.role !== "owner") {
-    redirect("/dashboard");
+    redirect(DASHBOARD_ROUTES.HOME);
   }
 
   const fields = await getFieldsByOwner(result.id);

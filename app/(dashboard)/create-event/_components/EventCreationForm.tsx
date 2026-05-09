@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createEvent } from "@/app/actions";
+import { DASHBOARD_ROUTES } from "@/lib/constants/routes";
 import { Field, Event } from "@/lib/database.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,7 +108,7 @@ export function EventCreationForm({
       }
 
       // Redirect to dashboard
-      router.push(`/dashboard`);
+      router.push(DASHBOARD_ROUTES.HOME);
     } catch (err) {
       setError("An unexpected error occurred");
       console.error(err);

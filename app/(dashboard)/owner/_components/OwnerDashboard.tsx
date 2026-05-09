@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { DASHBOARD_ROUTES, PUBLIC_ROUTES } from "@/lib/constants/routes";
 import { Field, EventWithField } from "@/lib/database.types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -41,12 +42,12 @@ export function OwnerDashboard({ userId, fields, events }: OwnerDashboardProps) 
 
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-4 mb-8">
-          <Link href="/create-field">
+          <Link href={DASHBOARD_ROUTES.CREATE_FIELD}>
             <Button className="w-full" size="lg">
               + Create Field
             </Button>
           </Link>
-          <Link href="/create-event">
+          <Link href={DASHBOARD_ROUTES.CREATE_EVENT}>
             <Button className="w-full" size="lg">
               + Create Event
             </Button>
@@ -100,7 +101,7 @@ export function OwnerDashboard({ userId, fields, events }: OwnerDashboardProps) 
                         <p className="text-zinc-600 mb-4">
                           No upcoming events scheduled
                         </p>
-                        <Link href="/create-event">
+                        <Link href={DASHBOARD_ROUTES.CREATE_EVENT}>
                           <Button size="sm">Create Event</Button>
                         </Link>
                       </Card>
@@ -171,7 +172,7 @@ function EventCard({ event }: { event: EventWithField }) {
       </div>
 
       <div className="flex gap-2 pt-4 border-t border-zinc-200">
-        <Link href={`/events/${event.id}`} className="flex-1">
+        <Link href={PUBLIC_ROUTES.EVENT_DETAIL(event.id)} className="flex-1">
           <Button variant="outline" size="sm" className="w-full">
             View Public
           </Button>
